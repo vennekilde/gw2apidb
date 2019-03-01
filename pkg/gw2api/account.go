@@ -4,21 +4,27 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+
+	"github.com/lib/pq"
+	"github.com/vennekilde/gw2apidb/pkg/orm"
 )
 
 // Account includes all general information
 type Account struct {
-	ID      string   `json:"id"`
-	Name    string   `json:"name"`
-	World   int      `json:"world"`
-	Guilds  []string `json:"guilds"`
-	Access  string   `json:"access"`
-	Created string   `json:"created"`
-
-	FractalLevel int `json:"fractal_level"`
-	DailyAP      int `json:"daily_ap"`
-	MonthlyAP    int `json:"monthly_ap"`
-	WvWRank      int `json:"wvw_rank"`
+	Gw2Model
+	ID           string         `json:"id"`
+	Name         string         `json:"name"`
+	World        int            `json:"world"`
+	Age          int            `json:"age"`
+	Guilds       pq.StringArray `json:"guilds" gorm:"type:varchar(255)[]"`
+	GuildLeader  pq.StringArray `json:"guild_leader" gorm:"type:varchar(255)[]"`
+	Access       pq.StringArray `json:"access" gorm:"type:varchar(255)[]"`
+	Created      string         `json:"created"`
+	Commander    bool           `json:"commander"`
+	FractalLevel int            `json:"fractal_level"`
+	DailyAP      int            `json:"daily_ap"`
+	MonthlyAP    int            `json:"monthly_ap"`
+	WvWRank      int            `json:"wvw_rank" gorm:"column:wvw_rank"`
 }
 
 // Account fetches the general account information
@@ -28,6 +34,10 @@ func (gw2 *GW2Api) Account() (acc Account, err error) {
 	tag := "account"
 	err = gw2.fetchAuthenticatedEndpoint(ver, tag, PermAccount, nil, &acc)
 	return
+}
+
+func (ent *Account) Persist() (err error) {
+	return orm.DB().Omit("db_created").Save(ent).Error
 }
 
 // BankItem describes an item stored in the players normal bank

@@ -1,5 +1,12 @@
 package gw2api
 
+import (
+	"time"
+
+	"github.com/lib/pq"
+	"github.com/vennekilde/gw2apidb/pkg/orm"
+)
+
 // Permission abstracts the bitmask containing permission information
 type Permission uint
 
@@ -39,9 +46,13 @@ var (
 // Including the name of the key as set by the user and the permissions
 // associated with it
 type TokenInfo struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Permissions []string `json:"permissions"`
+	Gw2Model
+	LastSuccess time.Time
+	ID          string         `json:"id"`
+	Name        string         `json:"name"`
+	APIKey      string         `json:"apikey"`
+	AccountID   string         `json:"accountid"`
+	Permissions pq.StringArray `json:"permissions" gorm:"type:varchar(255)[]"`
 }
 
 // TokenInfo requests the token information from the authenticated API
@@ -51,4 +62,21 @@ func (gw2 *GW2Api) TokenInfo() (token TokenInfo, err error) {
 	tag := "tokeninfo"
 	err = gw2.fetchAuthenticatedEndpoint(ver, tag, 0, nil, &token)
 	return
+}
+
+func (ent *TokenInfo) Persist(apikey string, accountID string) (err error) {
+	ent.APIKey = apikey
+	ent.AccountID = accountID
+	ent.LastSuccess = time.Now().UTC()
+	return orm.DB().Omit("db_created").Save(ent).Error
+}
+
+func (ent *TokenInfo) UpdateLastAttemptedUpdate() (err error) {
+	return orm.DB().Model(ent).Where("id = ?", ent.ID).Update("db_updated", time.Now()).Error
+}
+func (ent *TokenInfo) UpdateLastSuccessfulUpdate() (err error) {
+	return orm.DB().Model(ent).Where("id = ?", ent.ID).Updates(map[string]interface{}{
+		"db_updated":   time.Now().UTC(),
+		"last_success": time.Now().UTC(),
+	}).Error
 }
