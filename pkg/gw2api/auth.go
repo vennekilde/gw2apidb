@@ -42,6 +42,8 @@ var (
 	}
 )
 
+var TableNameTokenInfo = "token_infos"
+
 // TokenInfo contains information about the provided API Key of the user.
 // Including the name of the key as set by the user and the permissions
 // associated with it
