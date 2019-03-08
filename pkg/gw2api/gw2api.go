@@ -61,7 +61,7 @@ func (gw2 *GW2Api) SetAuthenticationWithoutCheck(auth string, permissions []stri
 	auth = strings.ToUpper(auth)
 	var m bool
 	if m, err = regexp.Match(`^(?:[A-F\d]{4,20}-?){8,}$`, []byte(auth)); !m {
-		return fmt.Errorf("Provided API Key doesn't match expectations: %s", err)
+		return fmt.Errorf("Provided API Key \"%s\" is not an apikey. Apikeys follow the format of XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXXXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX", auth)
 	}
 
 	gw2.Auth = auth
