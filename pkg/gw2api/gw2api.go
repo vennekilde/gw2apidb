@@ -57,13 +57,12 @@ func (gw2 *GW2Api) SetTimeout(t time.Duration) {
 // If permissions is not empty, the api key is assumed to have been working in the past,
 // so it won't waste the limited GW2api calls by checking the apikey with v2/tokeninfo
 // instance of GW2Api
-func (gw2 *GW2Api) SetAuthenticationWithoutCheck(auth string, permissions []string) (err error) {
-	auth = strings.ToUpper(auth)
+func (gw2 *GW2Api) SetAuthenticationWithoutCheck(authRaw string, permissions []string) (err error) {
+	auth := strings.ToUpper(authRaw)
 	var m bool
 	if m, err = regexp.Match(`^(?:[A-F\d]{4,20}-?){8,}$`, []byte(auth)); !m {
-		return fmt.Errorf("Provided API Key \"%s\" is not an apikey. Apikeys follow the format of XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXXXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX", auth)
+		return fmt.Errorf("Provided API Key \"%s\" is not an apikey. Example apikey: 12345678-90AB-CDEF-1234-567890ABCDE123456789-0ABC-DE12-3456-7890ABCDE123", authRaw)
 	}
-
 	gw2.Auth = auth
 	gw2.AuthFlags = 0
 	for _, perm := range permissions {
