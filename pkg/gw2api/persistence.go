@@ -5,8 +5,8 @@ import (
 )
 
 type Gw2Model struct {
-	DbCreated time.Time
-	DbUpdated time.Time
+	DbCreated time.Time `gorm:"default:CURRENT_TIMESTAMP"`
+	DbUpdated time.Time `gorm:"default:CURRENT_TIMESTAMP"`
 }
 
 func (ent *Gw2Model) BeforeSave() (err error) {

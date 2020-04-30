@@ -12,14 +12,14 @@ import (
 // Account includes all general information
 type Account struct {
 	Gw2Model
-	ID           string         `json:"id"`
-	Name         string         `json:"name"`
-	World        int            `json:"world"`
-	Age          int            `json:"age"`
+	ID           string         `json:"id" gorm:"type:varchar(64);primary_key:true"`
+	Name         string         `json:"name" gorm:"type:varchar(32);NOT NULL"`
+	World        int            `json:"world" gorm:"NOT NULL"`
+	Age          int            `json:"age" gorm:"NOT NULL"`
 	Guilds       pq.StringArray `json:"guilds" gorm:"type:varchar(255)[]"`
 	GuildLeader  pq.StringArray `json:"guild_leader" gorm:"type:varchar(255)[]"`
-	Access       pq.StringArray `json:"access" gorm:"type:varchar(255)[]"`
-	Created      string         `json:"created"`
+	Access       pq.StringArray `json:"access" gorm:"type:varchar(255)[];NOT NULL"`
+	Created      string         `json:"created" gorm:"type:varchar(32); NOT NULL"`
 	Commander    bool           `json:"commander"`
 	FractalLevel int            `json:"fractal_level"`
 	DailyAP      int            `json:"daily_ap"`

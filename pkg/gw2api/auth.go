@@ -49,11 +49,11 @@ var TableNameTokenInfo = "token_infos"
 // associated with it
 type TokenInfo struct {
 	Gw2Model
-	LastSuccess time.Time
-	ID          string         `json:"id"`
-	Name        string         `json:"name"`
-	APIKey      string         `json:"apikey"`
-	AccountID   string         `json:"accountid"`
+	LastSuccess time.Time      `gorm:"default:CURRENT_TIMESTAMP"`
+	ID          string         `json:"id" gorm:"type:varchar(64)"`
+	Name        string         `json:"name" gorm:"type:varchar(128);NOT NULL"`
+	APIKey      string         `json:"apikey" gorm:"type:varchar(128);NOT NULL"`
+	AccountID   string         `json:"accountid" gorm:"type:varchar(64);NOT NULL"`
 	Permissions pq.StringArray `json:"permissions" gorm:"type:varchar(255)[]"`
 }
 
